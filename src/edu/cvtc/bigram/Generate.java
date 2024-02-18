@@ -109,18 +109,17 @@ public class Generate {
         return result;
     }
 
-    //
+    // Chooses and returns a random Word that follows aWord in
+    // the database training data.
     public static Word getRandomBigram(Connection db, Random rng, Word aWord)
         throws SQLException
     {
-        int aNumber = rng.nextInt();
-
         Statement command = db.createStatement();
-        ResultSet rows = command.executeQuery("""
-            SELECT id, string FROM words
-            WHERE id = (SELECT next_words_id FROM bigrams
-                ORDER BY RANDOM() LIMIT 1)
-            """);
+        ResultSet rows = command.executeQuery(
+            "SELECT id, string FROM words "
+            + "WHERE id = (SELECT next_words_id FROM bigrams "
+            + "   WHERE words_id = " + aWord.id
+            + "    ORDER BY RANDOM() LIMIT 1)");
 
         rows.next();
         Word aNewWord = new Word(rows.getInt("id"),
