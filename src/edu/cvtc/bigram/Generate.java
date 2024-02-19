@@ -62,6 +62,7 @@ public class Generate {
                     }
                     long seed = args[i + 1].hashCode();
                     rng.setSeed(seed);
+                    i++;
                 }
                 default -> {
                     try {
@@ -98,7 +99,6 @@ public class Generate {
         Connection result = null;
         try {
             result = DriverManager.getConnection("jdbc:sqlite:" + DATABASE_PATH);
-            System.out.println("Created connection: " + result);
             Statement command = result.createStatement();
             command.setQueryTimeout(TIMEOUT_STATEMENT_S);
         }
@@ -130,8 +130,7 @@ public class Generate {
     // Returns a Word to begin generating bigram pairs. The returned
     // word should be capitalized to resemble an English sentence.
     public static Word getRandomWord(Connection db, Random rng) throws SQLException {
-        // nextInt can also return a negative number.
-        int aNumber = Math.abs(rng.nextInt());
+        int aNumber = rng.nextInt();
 
         Statement command = db.createStatement();
         ResultSet rows = command.executeQuery(
